@@ -3,27 +3,40 @@ package go_property_mapper
 import "reflect"
 
 type User struct {
-	UserId        string  `col:"user-id"`
-	FirstName     string  `col:"first-name"`
-	LastName      string  `col:"last-name"`
-	Address       string  `col:"address"`
-	Phone         int64   `col:"phone"`
-	Country       string  `col:"country"`
-	Pin           int     `col:"pin"`
-	Age           int     `col:"age"`
-	Nominee       string  `col:"nominee"`
-	Qualification string  `col:"qualification"`
-	BirthDate     string  `col:"birth-date"`
-	Salary        float64 `col:"salary"`
-	Father        string  `col:"father"`
-	Mother        string  `col:"mother"`
-	SpouseName    string  `col:"spouse-name"`
-	NumChildren   int     `col:"num-children"`
-	VehiclesOwned int     `col:"vehicles-owned"`
-	Company       string  `col:"company"`
-	Designation   string  `col:"designation"`
-	Department    string  `col:"department"`
-	IsVeteran     bool    `col:"is-veteran"`
+	UserId        *string  `col:"user-id"`
+	FirstName     *string  `col:"first-name"`
+	LastName      *string  `col:"last-name"`
+	Address       *string  `col:"address"`
+	Phone         *int64   `col:"phone"`
+	Country       *string  `col:"country"`
+	Pin           *int     `col:"pin"`
+	Age           *int     `col:"age"`
+	Nominee       *string  `col:"nominee"`
+	Qualification *string  `col:"qualification"`
+	BirthDate     *string  `col:"birth-date"`
+	Salary        *float64 `col:"salary"`
+	Father        *string  `col:"father"`
+	Mother        *string  `col:"mother"`
+	SpouseName    *string  `col:"spouse-name"`
+	NumChildren   *int     `col:"num-children"`
+	VehiclesOwned *int     `col:"vehicles-owned"`
+	Company       *string  `col:"company"`
+	Designation   *string  `col:"designation"`
+	Department    *string  `col:"department"`
+	IsVeteran     *bool    `col:"is-veteran"`
+}
+
+func GetColsAndVal(u interface{}) map[string]interface{} {
+	userProps := map[string]interface{}{}
+	r := reflect.TypeOf(u)
+	v := reflect.ValueOf(u)
+	for i := 0; i < r.NumField(); i++ {
+		n := r.Field(i).Name
+		if s, ex := r.FieldByName(n); ex && !v.FieldByName(n).IsNil() {
+			userProps[s.Tag.Get("col")] = v.FieldByName(n).Elem().Interface()
+		}
+	}
+	return userProps
 }
 
 func GetTagsReflect() map[string]bool {
